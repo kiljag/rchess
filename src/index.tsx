@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './styles/pieces.css';
-import App from './App';
+import { Provider } from 'react-redux';
+import ChesApp from './components/ChessApp';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ChesApp />
   </React.StrictMode>
 );

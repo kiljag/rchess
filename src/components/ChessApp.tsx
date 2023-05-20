@@ -1,30 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
+import ChessHeader from './ChessHeader';
 import ChessGrid from './ChessGrid';
-import { Chess } from 'chess.js';
-import { PieceMap, getPieceMap } from './chessTypes';
-
-const chess = new Chess();
-
-const squareWidth = 70;
-const playerIsWhite = true;
+import { Provider } from 'react-redux';
+import { store } from '../chess/store';
+import * as game from '../chess/game';
 
 export default function ChessApp() {
 
-    const [pieceMap, setPieceMap] = useState<PieceMap>(getPieceMap(chess));
+
+    function startGame() {
+        game.startChessGame();
+    }
+
+    // function stopGame() {
+    // }
 
     function handleMove(from: string, to: string) {
-        console.log('move : ', from, to);
-        chess.move(from + to);
-        setPieceMap(getPieceMap(chess));
+        let move = from + to;
+        console.log(`move : ${from}-${to}`);
+        game.makeChessMove(move);
     }
 
     return (
-        <ChessGrid
-            chess={chess}
-            pieceMap={pieceMap}
-            squareWidth={squareWidth}
-            playerIsWhite={playerIsWhite}
-            handleMove={handleMove}
-        />
+        <div>
+            <Provider store={store}>
+                <ChessHeader
+                    header='CHESS GAME'
+                    startGame={startGame}
+                />
+                <ChessGrid
+                    handleMove={handleMove}
+                />
+            </Provider>
+
+        </div>
     )
 }
