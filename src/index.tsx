@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './styles/pieces.css';
+import './styles/spinner.css'
 import ChesApp from './components/ChessApp';
 
 const root = ReactDOM.createRoot(

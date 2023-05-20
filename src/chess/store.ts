@@ -58,6 +58,7 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
                 playerIsWhite: payload.playerIsWhite,
                 gameLink: payload.gameLink,
                 move: "",
+                pieceMap: {},
             }
 
         case actionTypes.ACTION_GAME_MOVE:

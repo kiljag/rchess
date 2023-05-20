@@ -12,16 +12,32 @@ body {
 .header {
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: space-around;
   margin: auto;
   color: white;
   border: 2px solid whitesmoke;
-  height: calc(0.6 * var(--square-len));
+  height: calc(1.2 * var(--square-len));
   width: calc(12 * var(--square-len));
 }
 
-button {
-  border: 1px solid white;
+.header-title {
+  padding: calc(0.1 * var(--square-len));
+  font-size: calc(0.2 * var(--square-len));
+}
+
+.header-content {
+  border: 0.5px solid orange;
+  padding: calc(0.1 * var(--square-len));
+  flex-flow: column-reverse;
+  font-size: calc(0.3 * var(--square-len));
+  margin: auto;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.play-button:hover {
+  cursor: pointer;
 }
 
 .board-container {
