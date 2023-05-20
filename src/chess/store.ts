@@ -5,8 +5,13 @@ import { Chess } from 'chess.js';
 import { getPieceMap, PieceMap } from './util';
 
 export interface ChessState {
+    // can be one of the state.
+    isWaiting: boolean, // waiting for friend to accept the invite
+    isPlaying: boolean, // is playing now.
+    isGameover: boolean, // is gameover. 
+
     chess: Chess,
-    isActive: boolean,
+    gameLink: string,
     roomId: string,
     playerId: string,
     playerIsWhite: boolean,
@@ -15,8 +20,12 @@ export interface ChessState {
 }
 
 const initialState: ChessState = {
+    isWaiting: false,
+    isPlaying: false,
+    isGameover: false,
+
     chess: new Chess(),
-    isActive: false,
+    gameLink: "",
     roomId: "",
     playerId: "",
     playerIsWhite: true,
@@ -40,10 +49,14 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
 
             return {
                 ...state,
-                isActive: false,
+                isWaiting: true, // waiting for friend to accept the invite
+                isPlaying: false, // is playing now.
+                isGameover: false, // is gameover. 
+
                 roomId: payload.roomId,
                 playerId: payload.playerId,
                 playerIsWhite: payload.playerIsWhite,
+                gameLink: payload.gameLink,
                 move: "",
             }
 
@@ -54,7 +67,10 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
                 let chess = new Chess();
                 return {
                     ...state,
-                    isActive: true,
+                    isWaiting: false,
+                    isPlaying: true,
+                    isGameover: false,
+
                     roomId: state.roomId,
                     playerId: state.playerId,
                     chess: chess,
@@ -64,11 +80,22 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
 
             try {
                 state.chess.move(move);
-                return {
+                console.log('game over : ', state.chess.isGameOver());
+
+                let updated = {
                     ...state,
                     pieceMap: getPieceMap(state.chess),
                     move: move,
                 }
+                if (state.chess.isGameOver()) {
+                    updated = {
+                        ...updated,
+                        isWaiting: false,
+                        isPlaying: false,
+                        isGameover: true,
+                    }
+                }
+                return updated;
 
             } catch (err) {
                 console.error(err);

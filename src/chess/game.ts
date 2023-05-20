@@ -2,10 +2,18 @@ import * as actionTypes from './actionTypes';
 import { store } from './store';
 import * as types from './types';
 
-const wsocket = new WebSocket('ws://localhost:8080');
+const wsPath = `ws://${document.location.host}/`;
+console.log('wspath : ', wsPath);
+const wsocket = new WebSocket(wsPath);
 
 wsocket.onopen = (event: any) => {
     console.log('connection created');
+
+    // join if there is invited via link
+    if (document.location.pathname !== "/") {
+        let roomId = document.location.pathname.substring(1);
+        joinChessGame(roomId);
+    }
 };
 
 wsocket.onclose = (event: any) => {
@@ -25,6 +33,7 @@ wsocket.onmessage = (event: any) => {
                     roomId: payload['roomId'],
                     playerId: payload['playerId'],
                     playerIsWhite: (payload['color'] === 'white'),
+                    gameLink: `http://${document.location.host}/${payload['roomId']}`,
                 },
             });
             break;
@@ -52,8 +61,15 @@ export function startChessGame() {
     if (!wsocket) return;
     wsocket.send(JSON.stringify({
         type: types.TYPE_JOIN_ROOM,
+    }))
+}
+
+export function joinChessGame(roomId: string) {
+    if (!wsocket) return;
+    wsocket.send(JSON.stringify({
+        type: types.TYPE_JOIN_ROOM,
         payload: {
-            'roomId': 'room_123',
+            roomId: roomId,
         }
     }))
 }

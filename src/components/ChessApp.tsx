@@ -12,9 +12,6 @@ export default function ChessApp() {
         game.startChessGame();
     }
 
-    // function stopGame() {
-    // }
-
     function handleMove(from: string, to: string) {
         let move = from + to;
         console.log(`move : ${from}-${to}`);
@@ -25,7 +22,6 @@ export default function ChessApp() {
         <div>
             <Provider store={store}>
                 <ChessHeader
-                    header='CHESS GAME'
                     startGame={startGame}
                 />
                 <ChessGrid
