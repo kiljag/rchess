@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChessSquare from './ChessSquare';
 import { Chess, Square } from 'chess.js';
 import { ChessState } from '../chess/store';
 import { PieceMap, algebraic } from '../chess/util';
 import { connect } from 'react-redux';
+import movesound from '../assets/move-self.mp3';
 
 
 interface ChessGridProps {
     chess: Chess,
     pieceMap: PieceMap,
     playerIsWhite: boolean,
+    moves: string[],
     handleMove: (from: string, to: string) => void
 }
 
@@ -18,6 +20,7 @@ const mapStateToProps = function (state: ChessState) {
         chess: state.chess,
         pieceMap: state.pieceMap,
         playerIsWhite: state.playerIsWhite,
+        moves: state.moves,
     }
 }
 
@@ -94,9 +97,13 @@ function ChessGrid(props: ChessGridProps) {
         }
     }
 
-    if (!props.playerIsWhite) {
-
-    }
+    useEffect(() => {
+        if (props.moves.length > 0) {
+            let audio = new Audio(movesound);
+            audio.loop = false;
+            audio.play();
+        }
+    }, [props])
 
     return (
         <div className='board-container'>

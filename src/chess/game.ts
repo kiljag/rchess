@@ -10,8 +10,9 @@ wsocket.onopen = (event: any) => {
     console.log('connection created');
 
     // join if there is invited via link
-    if (document.location.pathname !== "/") {
-        let roomId = document.location.pathname.substring(1);
+    let hash = document.location.hash;
+    if (hash !== "" && hash !== "#") {
+        let roomId = hash.substring(1);
         joinChessGame(roomId);
     }
 };
@@ -27,13 +28,16 @@ wsocket.onmessage = (event: any) => {
     const payload = message['payload'];
     switch (type) {
         case types.TYPE_NEW_PLAYER:
+            // change the url
+            let roomId = payload['roomId'];
+            document.location.hash = roomId;
             store.dispatch({
                 type: actionTypes.ACTION_NEW_PLAYER,
                 payload: {
                     roomId: payload['roomId'],
                     playerId: payload['playerId'],
                     playerIsWhite: (payload['color'] === 'white'),
-                    gameLink: `http://${document.location.host}/${payload['roomId']}`,
+                    gameLink: document.location.href, // same as the url
                 },
             });
             break;

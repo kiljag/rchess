@@ -15,7 +15,7 @@ export interface ChessState {
     roomId: string,
     playerId: string,
     playerIsWhite: boolean,
-    move: string,
+    moves: string[],
     pieceMap: PieceMap,
 }
 
@@ -30,7 +30,7 @@ const initialState: ChessState = {
     playerId: "",
     playerIsWhite: true,
     pieceMap: {},
-    move: "",
+    moves: [],
 }
 
 export interface ChessAction extends Action {
@@ -57,7 +57,7 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
                 playerId: payload.playerId,
                 playerIsWhite: payload.playerIsWhite,
                 gameLink: payload.gameLink,
-                move: "",
+                moves: [],
                 pieceMap: {},
             }
 
@@ -86,7 +86,7 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
                 let updated = {
                     ...state,
                     pieceMap: getPieceMap(state.chess),
-                    move: move,
+                    moves: state.moves.concat(move),
                 }
                 if (state.chess.isGameOver()) {
                     updated = {
