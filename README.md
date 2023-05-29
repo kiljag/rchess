@@ -13,6 +13,7 @@ cd rchess
 npm install && cd server && npm install && cd ..
 
 # build and run test server
+./build-server.sh
 ./chess-server.sh
 
 ```
