@@ -9,12 +9,14 @@ const app = express();
 const httpServer = http.createServer(app);
 const wss = new WebSocket.Server({ server: httpServer });
 
-app.use(express.static('./dist/public'));
+const root_path = '../client/build/';
+
+app.use(express.static(root_path));
 
 app.get('/', (req: Request, res: Response) => {
     console.log('roomId : ', req.params.roomId);
     res.sendFile('index.html', {
-        root: './dist/public',
+        root: root_path,
     });
 });
 

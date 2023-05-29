@@ -1,19 +1,24 @@
 # React Chess
 
 Chess Player made with React/Typescript.
+This project is hosted [here](http://rchess.kjagadeesh.com)
 
 ![board image](https://github.com/kiljag/rchess/blob/master/src/assets/chess-board.png?raw=true)
 
-## Usage 
+## Docker Image
+
+``` bash
+docker pull kjagadeesh/rchess
+docker run -dp 8080:8080 kjagadeesh/rchess
+```
+
+## Manual building
 ```bash
 
 # clone and install dependencies
 git clone https://https://github.com/kiljag/rchess
 cd rchess
-npm install && cd server && npm install && cd ..
-
-# build and run test server
-./build-server.sh
-./chess-server.sh
-
+cd client && npm i
+cd server && npm i
+npm run dev
 ```

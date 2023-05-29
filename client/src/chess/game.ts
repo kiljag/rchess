@@ -62,7 +62,7 @@ function onmessage(event: any) {
 }
 
 // let wsurl = 'ws://localhost:8080/';
-let wsurl = `ws://${document.location.host}/`;
+let wsurl = `ws://${document.location.host}/ws/`;
 
 export async function startChessGame() {
     try {
