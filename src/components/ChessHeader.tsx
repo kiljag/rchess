@@ -22,7 +22,7 @@ const mapStateToProps = function (state: ChessState) {
 }
 
 function ChessHeader(props: ChessHeaderProps) {
-    console.log('header props : ', props);
+
     let children: any;
 
     if (props.isWaiting) {

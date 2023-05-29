@@ -26,8 +26,6 @@ const mapStateToProps = function (state: ChessState) {
 
 function ChessGrid(props: ChessGridProps) {
 
-    console.log('props : ', props);
-
     const [selected, setSelected] = useState<number>(-1);
     const [legalMoves, setLegalMoves] = useState<{ [squareId: number]: boolean }>({});
 
@@ -101,7 +99,9 @@ function ChessGrid(props: ChessGridProps) {
         if (props.moves.length > 0) {
             let audio = new Audio(movesound);
             audio.loop = false;
-            audio.play();
+            audio.play().catch((error) => {
+                console.error("Failed to play audio: ", error);
+            });
         }
     }, [props])
 

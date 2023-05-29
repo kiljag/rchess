@@ -1,27 +1,27 @@
+
 import * as actionTypes from './actionTypes';
 import { store } from './store';
 import * as types from './types';
 
-const wsPath = `ws://${document.location.host}/`;
-console.log('wspath : ', wsPath);
-const wsocket = new WebSocket(wsPath);
+let wsocket: WebSocket;
 
-wsocket.onopen = (event: any) => {
-    console.log('connection created');
-
-    // join if there is invited via link
-    let hash = document.location.hash;
-    if (hash !== "" && hash !== "#") {
-        let roomId = hash.substring(1);
-        joinChessGame(roomId);
-    }
-};
-
-wsocket.onclose = (event: any) => {
-    console.log('connection is closed');
+async function createConnection(wsurl: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        wsocket = new WebSocket(wsurl);
+        wsocket.onopen = (event: any) => {
+            resolve();
+        }
+        wsocket.onerror = (event: any) => {
+            reject();
+        }
+    })
 }
 
-wsocket.onmessage = (event: any) => {
+function onclose(event: any) {
+    console.log('connection closed');
+}
+
+function onmessage(event: any) {
     console.log('received : ', event.data);
     const message = JSON.parse(event.data);
     const type = message['type'];
@@ -36,7 +36,7 @@ wsocket.onmessage = (event: any) => {
                 payload: {
                     roomId: payload['roomId'],
                     playerId: payload['playerId'],
-                    playerIsWhite: (payload['color'] === 'white'),
+                    playerIsWhite: (payload['color'] === 'w'),
                     gameLink: document.location.href, // same as the url
                 },
             });
@@ -61,21 +61,46 @@ wsocket.onmessage = (event: any) => {
     }
 }
 
-export function startChessGame() {
-    if (!wsocket) return;
-    wsocket.send(JSON.stringify({
-        type: types.TYPE_JOIN_ROOM,
-    }))
+// let wsurl = 'ws://localhost:8080/';
+let wsurl = `ws://${document.location.host}/`;
+
+export async function startChessGame() {
+    try {
+        console.log('starting chess game');
+        await createConnection(wsurl);
+        wsocket.onclose = onclose;
+        wsocket.onmessage = onmessage
+        wsocket.send(JSON.stringify({
+            type: types.TYPE_JOIN_ROOM,
+        }));
+
+    } catch (err) {
+        console.error(err);
+    }
 }
 
-export function joinChessGame(roomId: string) {
-    if (!wsocket) return;
-    wsocket.send(JSON.stringify({
-        type: types.TYPE_JOIN_ROOM,
-        payload: {
-            roomId: roomId,
-        }
-    }))
+// join if invited via a link
+let hash = document.location.hash;
+if (hash !== "" && hash !== "#") {
+    let roomId = hash.substring(1);
+    joinChessGame(roomId);
+}
+
+export async function joinChessGame(roomId: string) {
+    try {
+        console.log('joining chess game : ', roomId);
+        await createConnection(wsurl);
+        wsocket.onclose = onclose;
+        wsocket.onmessage = onmessage;
+        wsocket.send(JSON.stringify({
+            type: types.TYPE_JOIN_ROOM,
+            payload: {
+                roomId: roomId,
+            }
+        }));
+    } catch (err) {
+        console.error(err)
+    }
 }
 
 export function stopChessGame() {
@@ -83,12 +108,15 @@ export function stopChessGame() {
 }
 
 export function makeChessMove(move: string) {
-    if (!wsocket) return;
+    if (!wsocket || wsocket.readyState === wsocket.CLOSED) {
+        return;
+    }
     wsocket.send(JSON.stringify({
         type: types.TYPE_GAME_ACTION,
         payload: {
             "roomId": store.getState().roomId,
             "playerId": store.getState().playerId,
+            "clientId": document.cookie.substring(9),
             "move": move,
         }
     }))

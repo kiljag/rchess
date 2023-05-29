@@ -49,6 +49,7 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
 
             return {
                 ...state,
+                chess: new Chess(),
                 isWaiting: true, // waiting for friend to accept the invite
                 isPlaying: false, // is playing now.
                 isGameover: false, // is gameover. 
@@ -63,7 +64,9 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
 
         case actionTypes.ACTION_GAME_MOVE:
             let move = payload.move;
-            if (move === "") { // startgame
+
+            // start game
+            if (move === "init") {
                 console.log('starting game...');
                 let chess = new Chess();
                 return {
@@ -79,6 +82,17 @@ const reducer = (state = initialState, action: ChessAction): ChessState => {
                 }
             }
 
+            // opposite player existed
+            if (move === "exit") {
+                console.log('exit the game...');
+                let chess = new Chess();
+                return {
+                    ...initialState,
+                    chess: chess,
+                }
+            }
+
+            // else make a move
             try {
                 state.chess.move(move);
                 console.log('game over : ', state.chess.isGameOver());

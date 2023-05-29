@@ -2,7 +2,7 @@
 import express, { Request, Response } from 'express';
 import http from 'http';
 import { WebSocket } from 'ws';
-import { handleJoinRoom, handleGameAction } from './wsocket';
+import * as game from './game';
 import * as types from './types';
 
 const app = express();
@@ -11,12 +11,12 @@ const wss = new WebSocket.Server({ server: httpServer });
 
 app.use(express.static('./dist/public'));
 
-app.get('/:roomId', (req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
     console.log('roomId : ', req.params.roomId);
     res.sendFile('index.html', {
         root: './dist/public',
-    })
-})
+    });
+});
 
 wss.on('connection', (ws: WebSocket) => {
 
@@ -32,11 +32,15 @@ wss.on('connection', (ws: WebSocket) => {
 
             switch (type) {
                 case types.TYPE_JOIN_ROOM:
-                    handleJoinRoom(ws, payload);
+                    game.handleJoinRoom(ws, payload);
                     break;
 
                 case types.TYPE_GAME_ACTION:
-                    handleGameAction(ws, payload);
+                    game.handleGameAction(ws, payload);
+                    break;
+
+                case types.TYPE_LEAVE_ROOM:
+                    game.handleLeaveRoom(ws, payload);
                     break;
 
                 default:
