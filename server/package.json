@@ -4,7 +4,7 @@
   "description": "A multiplayer chess server",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsx",
+    "build": "npx tsc",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
   },
   "author": "",
